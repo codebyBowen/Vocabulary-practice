@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Word Translation</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Interactive Word Translation</h1>
+      <textarea
+        id="input-string"
+        placeholder="Enter words with number bullet points, e.g.:
+1. Hello 你好
+2. world n 世界
+3. lapse v 失效 衰退"
+      ></textarea>
+      <button id="process-btn" onclick="processInput()">Process</button>
+      <div id="word-display"></div>
+      <div id="translation"></div>
+      <div class="btn-group">
+        <button id="toggle-translation-btn" onclick="toggleTranslation()">
+          Toggle Translation
+        </button>
+        <button id="pronounce-btn" onclick="pronounceWord()">Pronounce</button>
+      </div>
+      <div class="btn-group">
+        <button id="previous-btn" onclick="previousWord()">Previous</button>
+        <button id="master-btn" onclick="masterWord()">Master</button>
+        <button id="not-master-btn" onclick="notMasterWord()">
+          Not Master
+        </button>
+      </div>
+      <button id="switch-array-btn" onclick="switchArray()">
+        Switch to Not Mastered Words
+      </button>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
