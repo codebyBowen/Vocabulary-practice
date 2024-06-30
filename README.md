@@ -1,8 +1,8 @@
-# Interactive Word Translation
+#  Enhance vocabulary memorization
 
 ## Project Description
 
-This project is an interactive web application for word translation and study. It allows users to input a list of words with their translations, then practice and manage these words interactively.
+This project is an interactive web application designed to enhance vocabulary memorization and retention. It empowers users to create personalized word lists with translations, then practice and reinforce these words through engaging, memory-boosting exercises.
 
 ## Features
 
@@ -42,7 +42,7 @@ A modern web browser with JavaScript enabled.
 
 ---
 
-# 交互式单词翻译
+# 增强单词记忆
 
 ## 项目描述
 
