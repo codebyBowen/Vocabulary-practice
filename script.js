@@ -150,4 +150,85 @@ function toggleDarkMode() {
 function updateNotMasteredList() {
     const list = document.getElementById('not-mastered-list');
     list.innerHTML = '';
-    notMasteredWords.forEach
+    notMasteredWords.forEach((word, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${word} - ${notMasteredTranslations[index]}`;
+        list.appendChild(li);
+    });
+}
+
+function hideInputSection() {
+    document.getElementById('input-section').style.display = 'none';
+}
+
+function showProgressBar() {
+    document.getElementById('progress-bar-container').style.display = 'flex';
+}
+
+function updateProgressBar() {
+    const progressBar = document.querySelector('.progress');
+    const progressNumber = document.querySelector('.progress-number');
+    const currentWords = currentArray === 'initial' ? words : notMasteredWords;
+    const progress = ((currentIndex + 1) / currentWords.length) * 100;
+    progressBar.style.width = `${progress}%`;
+    progressNumber.textContent = `${currentIndex + 1}/${currentWords.length}`;
+}
+
+function toggleAutoPronounce() {
+    isAutoPronounceOn = !isAutoPronounceOn;
+    const autoPronounceBtn = document.querySelector('.btn-group button:nth-child(2)');
+    autoPronounceBtn.textContent = isAutoPronounceOn ? 'Auto-Pronounce: On' : 'Auto-Pronounce: Off';
+    if (isAutoPronounceOn) {
+        pronounceWord();
+    }
+}
+
+function toggleLoopPronunciation() {
+    isLoopPronunciationOn = !isLoopPronunciationOn;
+    const loopBtn = document.getElementById('loop-btn');
+    if (isLoopPronunciationOn) {
+        loopBtn.textContent = 'Loop Pronunciation: On';
+        loopBtn.classList.add('loop-active');
+        startLoopPronunciation();
+    } else {
+        loopBtn.textContent = 'Loop Pronunciation: Off';
+        loopBtn.classList.remove('loop-active');
+        stopLoopPronunciation();
+    }
+}
+
+function startLoopPronunciation() {
+    pronounceWord(); // Pronounce immediately when starting
+    loopInterval = setInterval(pronounceWord, 2000); // Pronounce every 2 seconds
+}
+
+function stopLoopPronunciation() {
+    clearInterval(loopInterval);
+}
+
+function endPractice() {
+    document.getElementById('progress-bar-container').style.display = 'none';
+    document.getElementById('input-section').style.display = 'block';
+    currentIndex = 0;
+    stopLoopPronunciation();
+    isLoopPronunciationOn = false;
+    document.getElementById('loop-btn').textContent = 'Loop Pronunciation: Off';
+    document.getElementById('loop-btn').classList.remove('loop-active');
+    updateDisplay();
+}
+
+function downloadCSV() {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Word,Translation\n";
+    notMasteredWords.forEach((word, index) => {
+        csvContent += `${word},${notMasteredTranslations[index]}\n`;
+    });
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "not_mastered_words.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
