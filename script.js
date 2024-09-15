@@ -3,7 +3,10 @@ let translations = [];
 let notMasteredWords = [];
 let notMasteredTranslations = [];
 let currentIndex = 0;
-let currentArray = 'initial'; // 'initial' or 'notMastered'
+let currentArray = 'initial';
+let isAutoPronounceOn = false;
+let isLoopPronunciationOn = false;
+let loopInterval;
 
 function processInput() {
     const input = document.getElementById('input-string').value;
@@ -34,10 +37,13 @@ function processInput() {
     currentArray = 'initial';
     updateDisplay();
     updateSwitchArrayButton();
+    updateNotMasteredList();
+    hideInputSection();
+    showProgressBar();
 }
 
 function isNonEnglish(text) {
-    return /[\u4e00-\u9fa5]/.test(text);  // This regex specifically matches Chinese characters
+    return /[\u4e00-\u9fa5]/.test(text);
 }
 
 function updateDisplay() {
@@ -47,7 +53,15 @@ function updateDisplay() {
     
     if (currentWords.length > 0) {
         wordDisplay.textContent = currentWords[currentIndex];
-        translationDisplay.textContent = '';  // Always hide translation initially
+        translationDisplay.textContent = '';
+        updateProgressBar();
+        if (isAutoPronounceOn) {
+            pronounceWord();
+        }
+        if (isLoopPronunciationOn) {
+            stopLoopPronunciation();
+            startLoopPronunciation();
+        }
     } else {
         wordDisplay.textContent = 'No words to display';
         translationDisplay.textContent = '';
@@ -68,24 +82,10 @@ function previousWord() {
     const currentWords = currentArray === 'initial' ? words : notMasteredWords;
     if (currentIndex > 0) {
         currentIndex--;
-        updateDisplay();
+    } else {
+        currentIndex = currentWords.length - 1;
     }
-}
-
-function masterWord() {
-    if (currentArray === 'notMastered' && notMasteredWords.length > 0) {
-        notMasteredWords.splice(currentIndex, 1);
-        notMasteredTranslations.splice(currentIndex, 1);
-    }
-    nextWord();
-}
-
-function notMasterWord() {
-    if (currentArray === 'initial' && words.length > 0) {
-        notMasteredWords.push(words[currentIndex]);
-        notMasteredTranslations.push(translations[currentIndex]);
-    }
-    nextWord();
+    updateDisplay();
 }
 
 function nextWord() {
@@ -98,12 +98,32 @@ function nextWord() {
     updateDisplay();
 }
 
+function masterWord() {
+    if (currentArray === 'notMastered' && notMasteredWords.length > 0) {
+        notMasteredWords.splice(currentIndex, 1);
+        notMasteredTranslations.splice(currentIndex, 1);
+        updateNotMasteredList();
+    }
+    nextWord();
+}
+
+function notMasterWord() {
+    if (currentArray === 'initial' && words.length > 0) {
+        if (!notMasteredWords.includes(words[currentIndex])) {
+            notMasteredWords.push(words[currentIndex]);
+            notMasteredTranslations.push(translations[currentIndex]);
+            updateNotMasteredList();
+        }
+    }
+    nextWord();
+}
+
 function pronounceWord() {
     const currentWords = currentArray === 'initial' ? words : notMasteredWords;
     if (currentWords.length > 0) {
-        const wordToSpeak = currentWords[currentIndex].split(' ')[0]; // Get only the first word
+        const wordToSpeak = currentWords[currentIndex].split(' ')[0];
         const utterance = new SpeechSynthesisUtterance(wordToSpeak);
-        utterance.lang = 'en-US'; // Set language to US English
+        utterance.lang = 'en-US';
         speechSynthesis.speak(utterance);
     }
 }
@@ -117,7 +137,17 @@ function switchArray() {
 
 function updateSwitchArrayButton() {
     const switchBtn = document.getElementById('switch-array-btn');
-    switchBtn.textContent = currentArray === 'initial' ? 'Switch to Not Mastered Words' : 'Switch to Initial Words';
+    switchBtn.textContent = currentArray === 'initial' ? 'Practice difficult words' : 'Back to all words';
 }
 
-//test
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const darkModeBtn = document.getElementById('dark-mode-btn');
+    darkModeBtn.innerHTML = document.body.classList.contains('dark-mode') ? 
+        '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+}
+
+function updateNotMasteredList() {
+    const list = document.getElementById('not-mastered-list');
+    list.innerHTML = '';
+    notMasteredWords.forEach
